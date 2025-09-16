@@ -10,7 +10,7 @@ function Search({userSearch,setuserSearch}) {
 
            <input type="text"
            
-           value={userSearch}placeholder='Find your next binge..........'
+           value={userSearch}placeholder='Find your next binge'
            onChange={(e)=> setuserSearch(e.target.value)}
            />
        </div>
