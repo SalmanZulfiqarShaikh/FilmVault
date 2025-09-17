@@ -3,6 +3,7 @@ import "./index.css";
 import "./App.css";
 import Search from "./components/Search";
 import Loader from "./components/Loader";
+import MovieCard from "./components/MovieCard";
 
 function App() {
   const [userSearch, setUserSearch] = useState("");
@@ -74,9 +75,9 @@ function App() {
             ) : (
               <ul>
                 {movies.map((movie) => (
-                  <li key={movie.id} className="text-white">
-                    {movie.title}
-                  </li>
+                  
+                    <MovieCard key={movie.id} movie={movie}/>
+                  
                 ))}
               </ul>
             )}
