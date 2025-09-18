@@ -57,6 +57,7 @@ function App() {
 
         <div className="wrapper">
           <header>
+            <img src="./FilmVault.png" alt="logo" className="logo-" onClick={App}/>
             <img src="./hero.png" alt="Hero Banner" />
             <h1>
               Your <span className="text-gradient">Go-To Hub</span> for Films
@@ -67,7 +68,7 @@ function App() {
 
           <section className="all-movies">
             <br />
-            <h2>Popular Movies:</h2>
+            <h2 className="heading">Popular Movies:</h2>
             {isLoading ? (
               <Loader/>
             ) : errorMessage ? (

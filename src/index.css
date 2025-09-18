@@ -43,9 +43,29 @@
     @apply sm:mt-10 mt-5;
   }
 
+  .logo- {
+  height: 8em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo-:hover {
+  filter: drop-shadow(0 0 2em #d0ff64aa);
+}
+
+
   header img {
     @apply w-full max-w-lg h-auto object-contain mx-auto drop-shadow-md;
   }
+
+
+  .heading {
+     color: #ffc72c;
+  }
+  header img:hover {
+  filter: drop-shadow(0 0 2em #64f5ffaa);
+  cursor: pointer;
+}
 }
 
 @layer components {
@@ -113,7 +133,7 @@
     }
 
     & .content {
-      @apply mt-2 flex flex-row items-center flex-wrap gap-2;
+      @apply mt-2 flex flex-row items-center flex-wrap gap-2 justify-center;
     }
 
     & .rating {
