@@ -6,6 +6,7 @@ import Loader from "./components/Loader";
 import MovieCard from "./components/MovieCard";
 
 function App() {
+
   const [userSearch, setUserSearch] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [movies, setMovies] = useState([]);
@@ -22,12 +23,12 @@ function App() {
     },
   };
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (query = '') => {
     setIsLoading(true);
     setErrorMessage("");
 
     try {
-      const endpoint = `${URL}/discover/movie?sort_by=popularity.desc`;
+      const endpoint = query ?  `${URL}/search/movie?query=${encodeURIComponent(query)}` : `${URL}/discover/movie?sort_by=popularity.desc`;
       const response = await fetch(endpoint, API_OPTIONS);
       const data = await response.json();
 
@@ -46,9 +47,14 @@ function App() {
     }
   };
 
+   // Debounce effect
   useEffect(() => {
-    fetchMovies();
-  }, []);
+    const delay = setTimeout(() => {
+      fetchMovies(userSearch);
+    }, 200); // wait 500ms after user stops typing
+
+    return () => clearTimeout(delay); // cleanup on re-typing
+  }, [userSearch]);
 
   return (
     <>
