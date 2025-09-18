@@ -51,7 +51,7 @@ function App() {
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchMovies(userSearch);
-    }, 200); // wait 500ms after user stops typing
+    }, 600); // wait 500ms after user stops typing
 
     return () => clearTimeout(delay); // cleanup on re-typing
   }, [userSearch]);
