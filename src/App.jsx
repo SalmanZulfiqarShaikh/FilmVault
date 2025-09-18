@@ -4,6 +4,8 @@ import "./App.css";
 import Search from "./components/Search";
 import Loader from "./components/Loader";
 import MovieCard from "./components/MovieCard";
+import { Account } from "appwrite";
+
 
 function App() {
 
@@ -55,6 +57,9 @@ function App() {
 
     return () => clearTimeout(delay); // cleanup on re-typing
   }, [userSearch]);
+
+
+  
 
   return (
     <>
