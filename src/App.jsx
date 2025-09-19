@@ -4,7 +4,8 @@ import "./App.css";
 import Search from "./components/Search";
 import Loader from "./components/Loader";
 import MovieCard from "./components/MovieCard";
-import { Account } from "appwrite";
+import { updateSearchCount } from "./appwrite";
+
 
 
 function App() {
@@ -39,6 +40,9 @@ function App() {
       }
 
       setMovies(data.results || []);
+      if (query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      }
     } catch (error) {
       console.error("Error fetching Content:", error);
       setErrorMessage(
