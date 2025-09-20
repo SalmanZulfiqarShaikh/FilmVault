@@ -41,7 +41,7 @@ export const updateSearchCount = async (searchTerm, movie) => {
 export const getTopSearches = async () => {
     try {
         const result = await databases.listDocuments(DATABASE_ID, COLLECTION_ID, [
-            Query.limit(5),
+            Query.limit(10),
             Query.orderDesc("count")
         ])
 

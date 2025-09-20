@@ -5,23 +5,18 @@ import Search from "./components/Search";
 import Loader from "./components/Loader";
 import MovieCard from "./components/MovieCard";
 import { getTopSearches, updateSearchCount } from "./appwrite";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import { Navigation, Pagination } from "swiper/modules";
-
-
-
+import Slider from "./components/Slider";
 
 function App() {
-
   const [userSearch, setUserSearch] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [movies, setMovies] = useState([]);
+  const [tvShows, setTvShows] = useState([]);
+  const [comedyMovies, setComedyMovies] = useState([]);
+  const [actionMovies, setActionMovies] = useState([]);
+  const [horrorMovies, setHorrorMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [trendingContent, setTrendingContent] = useState([]);
-
 
   const URL = "https://api.themoviedb.org/3";
   const API_KEY = import.meta.env.VITE_TMDB_API;
@@ -34,66 +29,124 @@ function App() {
     },
   };
 
-  const fetchMovies = async (query = '') => {
+  // Fetch Movies
+  const fetchMovies = async (query = "") => {
     setIsLoading(true);
     setErrorMessage("");
 
     try {
-      const endpoint = query ?  `${URL}/search/movie?query=${encodeURIComponent(query)}` : `${URL}/discover/movie?sort_by=popularity.desc`;
+      const endpoint = query
+        ? `${URL}/search/movie?query=${encodeURIComponent(query)}`
+        : `${URL}/discover/movie?sort_by=popularity.desc`;
+
       const response = await fetch(endpoint, API_OPTIONS);
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.status_message || "Failed to fetch Content");
-      }
+      if (!response.ok) throw new Error(data.status_message || "Failed to fetch movies");
 
       setMovies(data.results || []);
+
       if (query && data.results.length > 0) {
         await updateSearchCount(query, data.results[0]);
       }
     } catch (error) {
-      console.error("Error fetching Content:", error);
-      setErrorMessage(
-        "Error Fetching Content. Please Try Again. Thanks for your patience."
-      );
+      console.error("Error fetching Movies:", error);
+      setErrorMessage("Error fetching movies. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Fetch TV Shows
+  const fetchTvShows = async (query = "") => {
+    setIsLoading(true);
+    setErrorMessage("");
 
+    try {
+      const endpoint = query
+        ? `${URL}/search/tv?query=${encodeURIComponent(query)}`
+        : `${URL}/discover/tv?sort_by=popularity.desc`;
+
+      const response = await fetch(endpoint, API_OPTIONS);
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.status_message || "Failed to fetch TV shows");
+
+      setTvShows(data.results || []);
+
+      if (query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching TV Shows:", error);
+      setErrorMessage("Error fetching TV shows. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch Comedy, Action, Horror movies
+  const fetchGenreMovies = async () => {
+    try {
+      // Comedy
+      const comedyRes = await fetch(`${URL}/discover/movie?with_genres=35`, API_OPTIONS);
+      const comedyData = await comedyRes.json();
+      setComedyMovies(comedyData.results || []);
+
+      // Action
+      const actionRes = await fetch(`${URL}/discover/movie?with_genres=28`, API_OPTIONS);
+      const actionData = await actionRes.json();
+      setActionMovies(actionData.results || []);
+
+      // Horror
+      const horrorRes = await fetch(`${URL}/discover/movie?with_genres=27`, API_OPTIONS);
+      const horrorData = await horrorRes.json();
+      setHorrorMovies(horrorData.results || []);
+    } catch (error) {
+      console.error("Error fetching genre movies:", error);
+    }
+  };
+
+  // Load trending from Appwrite
   const loadTrendingContent = async () => {
-     try {
+    try {
       const movies = await getTopSearches();
       setTrendingContent(movies || []);
-     } catch (error) {
+    } catch (error) {
       console.error("Error fetching trending movies:", error);
-     }
-  }
-   // Debounce effect
+    }
+  };
+
+  // Debounced Search → Movies + TV
   useEffect(() => {
     const delay = setTimeout(() => {
-      fetchMovies(userSearch);
-    }, 600); // wait 500ms after user stops typing
+      if (userSearch.trim() !== "") {
+        fetchMovies(userSearch);
+        fetchTvShows(userSearch);
+      } else {
+        fetchMovies();
+        fetchTvShows();
+        fetchGenreMovies();
+        loadTrendingContent();
+      }
+    }, 600);
 
-    return () => clearTimeout(delay); // cleanup on re-typing
+    return () => clearTimeout(delay);
   }, [userSearch]);
 
-
+  // Initial load
   useEffect(() => {
-     loadTrendingContent();
+    fetchMovies();
+    fetchTvShows();
+    fetchGenreMovies();
+    loadTrendingContent();
   }, []);
-
-  
 
   return (
     <>
       <main>
-        
-
         <div className="wrapper">
           <header>
-            {/* <img src="./FilmVault.png" alt="logo" className="logo-" onClick={App}/> */}
             <img src="./hero.png" alt="Hero Banner" />
             <h1>
               Your <span className="text-gradient">Go-To Hub</span> for Films
@@ -102,32 +155,54 @@ function App() {
             <Search search={userSearch} setSearch={setUserSearch} />
           </header>
 
-          {trendingContent.length > 0 && (
-  <section className="trending">
-    <h2>Trending Now :</h2>
+          {/* IF searching → only show results */}
+          {userSearch ? (
+            <section className="search-results">
+                <br />
+              <h2>Search Results for "{userSearch}" :</h2>
+              <br />
+              <br />
+              {isLoading ? (
+                <Loader />
+              ) : errorMessage ? (
+                <p className="text-red-700">{errorMessage}</p>
+              ) : movies.length === 0 && tvShows.length === 0 ? (
+                <p>No results found.</p>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {[...movies, ...tvShows].map((item) => (
+                    <MovieCard key={item.id} movie={item} />
+                  ))}
+                </div>
+              )}
+            </section>
+          ) : (
+            <>
+              {/* Trending */}
+              {trendingContent.length > 0 && (
+                <section className="trending">
+                  <h2>Trending Now 🔥</h2>
+                  <ul>
+                    {trendingContent.map((movie, index) => (
+                      <li key={movie.id || index}>
+                        <p>{index + 1}</p>
+                        <img
+                          src={
+                            movie.poster_url ||
+                            (movie.poster_path
+                              ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
+                              : "/fallback.png")
+                          }
+                          alt={movie.title}
+                        />
+                        <p>{movie.title}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
 
-    <ul>
-      {trendingContent.map((movie, index) => (
-        <li key={movie.id || index}>
-          <p>{index + 1}</p>
-          <img
-            src={
-              movie.poster_url || 
-              (movie.poster_path 
-                ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` 
-                : "/fallback.png")
-            }
-            alt={movie.title}
-          />
-          <p>{movie.title}</p>
-        </li>
-      ))}
-    </ul>
-  </section>
-)}
-
-      
-
+              {/* Popular Movies */}
 <section className="all-movies">
   <br />
   <h2 className="heading">Popular Movies :</h2>
@@ -136,38 +211,90 @@ function App() {
     <Loader />
   ) : errorMessage ? (
     <p className="text-red-700">{errorMessage}</p>
+  ) : movies.length > 0 ? (
+    <Slider
+      items={movies.slice(0, 20)}
+      uniqueKey="movies"
+      renderItem={(movie) => <MovieCard movie={movie} />}
+    />
   ) : (
-    <div className="relative">
-      {/* Slider */}
-      <Swiper
-        modules={[Navigation]}
-        navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        }}
-        spaceBetween={15}
-        breakpoints={{
-          320: { slidesPerView: 2 },   // Mobile
-          768: { slidesPerView: 4 },   // Tablet
-          1024: { slidesPerView: 5 },  // Desktop
-        }}
-      >
-        {movies.slice(0, 20).map((movie) => (
-          <SwiperSlide key={movie.id}>
-            <MovieCard movie={movie} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+    <p>No Results Found</p>
+  )}
+</section>
 
-      {/* Custom Arrows */}
-      <div className="swiper-button-prev !text-white !w-10 !h-10 !-left-14 after:!text-2xl" />
-      <div className="swiper-button-next !text-white !w-10 !h-10 !-right-14 after:!text-2xl" />
-    </div>
+{/* Popular TV Shows */}
+<section className="all-movies">
+  <br />
+  <br />
+  <h2 className="heading">Popular TV Shows :</h2>
+  <br />
+  {isLoading ? (
+    <Loader />
+  ) : tvShows.length > 0 ? (
+    <Slider
+      items={tvShows.slice(0, 20)}
+      uniqueKey="tv"
+      renderItem={(tv) => <MovieCard movie={tv} />}
+    />
+  ) : (
+    <p>No Results Found</p>
   )}
 </section>
 
 
+            {/* Comedy Movies */}
+            <section className="all-movies">
+                <br />
+                <br />
+              <h2 className="heading">Comedy Movies 😂</h2>
+              <br />
+              {comedyMovies.length > 0 ? (
+                <Slider
+                  items={comedyMovies.slice(0, 20)}
+                  uniqueKey="comedy"
+                  renderItem={(movie) => <MovieCard movie={movie} />}
+                />
+              ) : (
+                <p>No Comedy Movies Found</p>
+              )}
+            </section>
 
+            {/* Action Movies */}
+            <section className="all-movies">
+                <br />
+                <br />
+              <h2 className="heading">Action Movies 🍿</h2>
+              <br />
+              {actionMovies.length > 0 ? (
+                <Slider
+                  items={actionMovies.slice(0, 20)}
+                  uniqueKey="action"
+                  renderItem={(movie) => <MovieCard movie={movie} />}
+                />
+              ) : (
+                <p>No Action Movies Found</p>
+              )}
+            </section>
+
+            {/* Horror Movies */}
+            <section className="all-movies">
+                <br />
+                <br />
+              <h2 className="heading">Horror Movies ☠️</h2>
+              <br />
+              {horrorMovies.length > 0 ? (
+                <Slider
+                  items={horrorMovies.slice(0, 20)}
+                  uniqueKey="horror"
+                  renderItem={(movie) => <MovieCard movie={movie} />}
+                />
+              ) : (
+                <p>No Horror Movies Found</p>
+              )}
+            </section>
+
+            </>
+          )}
         </div>
       </main>
     </>
