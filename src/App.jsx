@@ -6,6 +6,7 @@ import Loader from "./components/Loader";
 import MovieCard from "./components/MovieCard";
 import { getTopSearches, updateSearchCount } from "./appwrite";
 import Slider from "./components/Slider";
+import Footer from "./components/Footer";
 
 function App() {
   const [userSearch, setUserSearch] = useState("");
@@ -297,6 +298,7 @@ function App() {
           )}
         </div>
       </main>
+      <Footer/>
     </>
   );
 }
