@@ -89,11 +89,11 @@ function App() {
   return (
     <>
       <main>
-        <div className="pattern" />
+        
 
         <div className="wrapper">
           <header>
-            <img src="./FilmVault.png" alt="logo" className="logo-" onClick={App}/>
+            {/* <img src="./FilmVault.png" alt="logo" className="logo-" onClick={App}/> */}
             <img src="./hero.png" alt="Hero Banner" />
             <h1>
               Your <span className="text-gradient">Go-To Hub</span> for Films
@@ -130,7 +130,7 @@ function App() {
 
 <section className="all-movies">
   <br />
-  <h2 className="heading">Popular Movies Right Now :</h2>
+  <h2 className="heading">Popular Movies :</h2>
   <br />
   {isLoading ? (
     <Loader />
@@ -148,11 +148,11 @@ function App() {
         spaceBetween={15}
         breakpoints={{
           320: { slidesPerView: 2 },   // Mobile
-          768: { slidesPerView: 3 },   // Tablet
-          1024: { slidesPerView: 4 },  // Desktop
+          768: { slidesPerView: 4 },   // Tablet
+          1024: { slidesPerView: 5 },  // Desktop
         }}
       >
-        {movies.slice(0, 8).map((movie) => (
+        {movies.slice(0, 20).map((movie) => (
           <SwiperSlide key={movie.id}>
             <MovieCard movie={movie} />
           </SwiperSlide>
