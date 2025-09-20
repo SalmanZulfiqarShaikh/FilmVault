@@ -6,7 +6,6 @@ import Loader from "./components/Loader";
 import MovieCard from "./components/MovieCard";
 import { getTopSearches, updateSearchCount } from "./appwrite";
 import Slider from "./components/Slider";
-import Footer from "./components/Footer";
 
 function App() {
   const [userSearch, setUserSearch] = useState("");
@@ -146,8 +145,14 @@ function App() {
   return (
     <>
       <main>
-        <div className="wrapper">
+        
+        
           <header>
+           {/* <div className="flex flex-col items-center justify-center text-center mt-8">
+  <img src="FilmVault.png" className="h-40 w-auto" alt="Film Vault Logo" />
+  <h1 className="text-4xl font-bold mt-4">Film Vault</h1> */}
+{/* </div> */}
+
             <img src="./hero.png" alt="Hero Banner" />
             <h1>
               Your <span className="text-gradient">Go-To Hub</span> for Films
@@ -296,9 +301,11 @@ function App() {
 
             </>
           )}
-        </div>
+       
+
+
       </main>
-      <Footer/>
+      
     </>
   );
 }

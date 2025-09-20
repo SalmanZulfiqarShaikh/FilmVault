@@ -181,6 +181,12 @@
   font-family: "Bebas Neue", sans-serif;
 }
 
+.footer {
+  width: 100%;
+  overflow: hidden;
+  
+}
+
 @utility hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
