@@ -29,10 +29,10 @@ const Slider = ({ items, renderItem, uniqueKey }) => {
 
       {/* Custom Arrows */}
       <div
-        className={`${uniqueKey}-prev swiper-button-prev !text-yellow-400 !w-10 !h-10 !-left-14 after:!text-3xl after:!font-bold`}
+        className={`${uniqueKey}-prev swiper-button-prev !text-yellow-400 !w-10 !h-10 !-left-9 after:!text-3xl after:!font-bold`}
       ></div>
       <div
-        className={`${uniqueKey}-next swiper-button-next !text-yellow-400 !w-10 !h-10 !-right-14 after:!text-3xl after:!font-bold`}
+        className={`${uniqueKey}-next swiper-button-next !text-yellow-400 !w-10 !h-10 !-right-9 after:!text-3xl after:!font-bold`}
       ></div>
     </div>
   );
