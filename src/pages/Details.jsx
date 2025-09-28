@@ -107,7 +107,7 @@ function Details() {
           {/* Description */}
           <p className="text-white text-lg mb-4">{overview}</p>
 
-          {/* Meta Info */}
+          {/*  Info */}
           <p className="mt-2 text-white">
             <span className="text-yellow-400">⭐ Rating:</span> {certification}
           </p>

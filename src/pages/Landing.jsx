@@ -174,7 +174,7 @@ function Landing() {
               ) : errorMessage ? (
                 <p className="text-red-700">{errorMessage}</p>
               ) : movies.length === 0 && tvShows.length === 0 ? (
-                <p>No results found.</p>
+                <p className="text-white">No results found.</p>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {[...movies, ...tvShows].map((item) => (
