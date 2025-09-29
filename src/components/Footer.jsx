@@ -34,7 +34,7 @@ export default function Footer() {
           <FaInstagram size={28} />
         </a>
       </div>
-        <p>Made with 💛 by Salman</p>
+        <p>Made by Salman Zulfiqar Shaikh</p>
     </footer>
   );
 }
